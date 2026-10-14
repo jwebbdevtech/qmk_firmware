@@ -1,0 +1,27 @@
+name: Build QMK Firmware
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install QMK Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip git
+        python3 -m pip install qmk
+
+    - name: Compile Layout
+      run: |
+        qmk compile -kb leopold/fc220tp -km custom_rgb
+
+    - name: Upload Finished Firmware
+      uses: actions/upload-artifact@v3
+      with:
+        name: fc220tp_firmware
+        path: .build/*.bin
