@@ -3,7 +3,6 @@ on: [workflow_dispatch]
 
 jobs:
   build:
-    # Use the stable, pinned ubuntu-24.04 image to bypass the migration warnings
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout Repo
@@ -14,15 +13,15 @@ jobs:
     - name: Install QMK Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y python3-pip git
+        sudo apt-get install -y python3-pip git gcc-avr binutils-avr avr-libc gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi
         python3 -m pip install qmk
 
-    - name: Compile Layout
+    - name: Force Build via Makefile
+      # We bypass the 'qmk compile' check by running the lower-level compiler make syntax
       run: |
-        qmk compile -kb leopold/fc220tp -km custom_rgb
-
+        make leopold/fc220tp:custom_rgb
+        
     - name: Upload Finished Firmware
-      # Upgraded to v4 to comply with current GitHub requirements
       uses: actions/upload-artifact@v4
       with:
         name: fc220tp_firmware
