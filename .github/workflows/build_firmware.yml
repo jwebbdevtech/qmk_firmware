@@ -3,10 +3,11 @@ on: [workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Use the stable, pinned ubuntu-24.04 image to bypass the migration warnings
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -21,7 +22,8 @@ jobs:
         qmk compile -kb leopold/fc220tp -km custom_rgb
 
     - name: Upload Finished Firmware
-      uses: actions/upload-artifact@v3
+      # Upgraded to v4 to comply with current GitHub requirements
+      uses: actions/upload-artifact@v4
       with:
         name: fc220tp_firmware
         path: .build/*.bin
